@@ -5,6 +5,7 @@ import SliderPrice from "../ui/Slider";
 import CheckBoxColor from "../ui/CheckBoxColor";
 import { useState } from "react";
 import SizeButton from "../ui/SizeButton";
+import Pagenation from "../components/Pagenation";
 
 const Shop = () => {
   const filterList = [
@@ -52,21 +53,50 @@ const Shop = () => {
     "4X-Large"
   ];
 
+  const dressStyles = [
+    "Casual",
+    "Formal",
+    "Party",
+    "Gym"
+  ]
+
+  const products = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
+  ]
+
+
+  const [filterOpenned, setFilterOpenned] = useState(false)
+
+  function toggleFilter() {
+    !filterOpenned ? setFilterOpenned(true) : setFilterOpenned(false)
+  }
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [postPerPage, setPostPerPage] = useState(8)
+
+  const lastPostIndex = currentPage * postPerPage;
+  const firstPostIndex = lastPostIndex  - postPerPage;
+  const currentPosts = products.slice(firstPostIndex, lastPostIndex)
+
   return (
-    <section className="section-container mt-10 overflow-hidden mx-auto">
+    <section className="section-container mt-10 overflow-auto mx-auto">
       <div>
         <div>
           <span>Home</span>
           <span>Casual</span>
         </div>
 
+       
         <div className="flex flex-col md:w-full">
-          <div className="w-full md:w-[25dvw] bg-gray-100 absolute right-0 left-0 p-4 rounded-2xl">
+          {/* Filtering Menu*/}
+          <div className={`${!filterOpenned ? 'hidden' : ''} w-full md:w-[25dvw] bg-gray-100 absolute right-0 left-0 p-4 rounded-2xl z-10 mt-5`}>
             {/* Filter */}
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-satoshi text-xl font-bold text-primary">Filter</h2>
-                <IoIosClose className="w-10 h-10 text-gray-500" />
+                <button onClick={toggleFilter}>
+                  <img src="/closebutton.png" alt="" />
+                </button>
               </div>
               <hr className="opacity-10"/>
               <div className="mt-5">
@@ -81,7 +111,7 @@ const Shop = () => {
               </div>
             </div>
             {/* Price */}
-            <div className="mt-5">
+            <div className="mt-5 mb-16">
               <hr className="opacity-10 mb-5"/>
               <div>
               <h2 className="font-satoshi text-xl font-bold text-primary">Price</h2>
@@ -124,18 +154,59 @@ const Shop = () => {
                 ))}
               </div>
             </div>
-            <div>
-
+            {/* Dress Style */}
+            <div className="mt-5">
+              <hr className="opacity-10 mb-5"/>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-satoshi text-xl font-bold text-primary">Dress Style</h2>
+              </div>
+              <div className="mt-5">
+                <ul className="font-satoshi font-light opacity-60 flex flex-col gap-5">
+                  {dressStyles.map((style, i) => (
+                    <li key={i} className="flex justify-between">
+                      {style}
+                      <FaAngleRight />
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <button>
-
+            <button className="mt-5 w-full py-4 bg-black text-white rounded-full font-satoshi text-sm">
+              Apply Filter
             </button>
           </div>
+          
 
-          <div className="md:w-[75dvw] bg-purple-300">
-            kanan
+          {/* Products Grid */}
+          <div className="w-full md:w-[75dvw] mt-5 h-fit">
+            <div className="flex justify-between items-center"> 
+              <div className="flex gap-2 items-end">
+                <h2 className="font-satoshi text-2xl text-primary font-bold leading-none">Casual</h2>
+                <span className="font-satoshi text-sm text-primary opacity-60 leading-none">Showing 1-10 of 100 Products</span>
+              </div>
+              <button className="w-8 h-8 bg-[#F0F0F0] flex items-center justify-center rounded-full" onClick={toggleFilter}>
+                <img src="/filter-icon.png" alt="filter-icon" className="object-contain"/>
+              </button>
+            </div>
+
+            <div>
+              <div className="grid grid-cols-2 mt-7 gap-x-[14px] gap-y-6">
+                {currentPosts.map((p) => (
+                  <ProductCard key={p}/>
+                ))}
+              </div>
+            </div>
           </div>
-
+          
+          <div>
+            <hr className="opacity-10 my-5"/>
+            <Pagenation
+              totalPosts= {products.length}
+              postsPerPage= {postPerPage}
+              setCurrentPage= {setCurrentPage}
+              currentPage= {currentPage}
+            />
+          </div>
 
 
         </div>

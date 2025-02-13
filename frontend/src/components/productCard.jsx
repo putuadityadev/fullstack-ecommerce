@@ -2,7 +2,7 @@
 
 const ProductCard = () => {
   return (
-    <div className="flex flex-col w-[172px] gap-[10px] md:w-fit section-container">
+    <div className="flex flex-col w-[172px] gap-[10px] md:w-fit">
       <div className="bg-[#F0EEED] w-[172px] h-[172px] rounded-xl overflow-hidden flex items-center justify-center md:w-[295px] md:h-[298px]">
         <img
         src="../public/tshirt.png"
