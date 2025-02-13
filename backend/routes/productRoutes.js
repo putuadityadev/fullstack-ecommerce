@@ -13,12 +13,12 @@ productRoutes.route('/products').get(async (req, res) => {
     if(!data){
       console.log("Not found a data")
     } else {
-      res(data)
+      res.json(data)
     }
   } catch(err) {
     res.status(500).json({
       error: err.message,
-      message: 'Eror fetching data'
+      message: 'Error fetching data'
     })
   }
 });

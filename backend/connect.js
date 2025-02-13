@@ -14,10 +14,10 @@ const client = new MongoClient(process.env.ATLAS_URI, {
 let database;
 
 module.exports = {
-  conncetToServer: async () => {
+  connectToServer: async () => {
     await client.connect();
     database = client.db('shopdi_database')
-    console.log("Success conncet to MongoDB!")
+    console.log("Success connect to MongoDB!")
   },
   getDb: () => {
     if(!database) throw new Error("Database not found");
