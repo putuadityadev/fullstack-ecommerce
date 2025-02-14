@@ -1,9 +1,16 @@
 @import 'tailwindcss';
 
+@font-face {
+  font-family: 'Integral CF';
+  src: url(fonts/IntegralCF/Fontspring-DEMO-integralcf-bold.otf) format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
 
 @theme {
   --font-satoshi: "Satoshi", sans-serif;
   --color-primary: #460203;
+  --font-integralcf: "Integral CF", sans-serif;
 }
 
 @utility section-container {

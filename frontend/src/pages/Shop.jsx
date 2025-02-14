@@ -79,7 +79,7 @@ const Shop = () => {
   const currentPosts = products.slice(firstPostIndex, lastPostIndex)
 
   return (
-    <section className="section-container mt-10 overflow-auto mx-auto">
+    <section className="section-container mt-10 mx-auto">
       <div>
         <div>
           <span>Home</span>
@@ -87,9 +87,9 @@ const Shop = () => {
         </div>
 
        
-        <div className="flex flex-col md:w-full">
+        <div className="flex flex-col md:w-full md:flex-row md:gap-5">
           {/* Filtering Menu*/}
-          <div className={`${!filterOpenned ? 'hidden' : ''} w-full md:w-[25dvw] bg-gray-100 absolute right-0 left-0 p-4 rounded-2xl z-10 mt-5`}>
+          <div className={`${!filterOpenned ? 'hidden' : ''} md:block w-full md:w-[25dvw] md:border border-gray-300 bg-[#F0F0F0] md:relative absolute right-0 left-0 p-4 rounded-2xl z-10 mt-5 max-h-fit`}>
             {/* Filter */}
             <div>
               <div className="flex justify-between items-center mb-4">
@@ -171,51 +171,55 @@ const Shop = () => {
                 </ul>
               </div>
             </div>
-            <button className="mt-5 w-full py-4 bg-black text-white rounded-full font-satoshi text-sm">
+            <button className="mt-5 w-full py-4 bg-primary text-white rounded-full font-satoshi text-sm">
               Apply Filter
             </button>
           </div>
           
 
           {/* Products Grid */}
-          <div className="w-full md:w-[75dvw] mt-5 h-fit">
+          <div className="w-full md:w-[75dvw] mt-5 h-fit overflow-hidden">
             <div className="flex justify-between items-center"> 
               <div className="flex gap-2 items-end">
                 <h2 className="font-satoshi text-2xl text-primary font-bold leading-none">Casual</h2>
                 <span className="font-satoshi text-sm text-primary opacity-60 leading-none">Showing 1-10 of 100 Products</span>
               </div>
-              <button className="w-8 h-8 bg-[#F0F0F0] flex items-center justify-center rounded-full" onClick={toggleFilter}>
+              <button className="w-8 h-8 bg-[#F0F0F0] flex items-center justify-center rounded-full md:hidden" onClick={toggleFilter}>
                 <img src="/filter-icon.png" alt="filter-icon" className="object-contain"/>
               </button>
             </div>
 
             <div>
-              <div className="grid grid-cols-2 mt-7 gap-x-[14px] gap-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 mt-7 gap-x-[14px] gap-y-6 md:gap-x-5 md:gap-y-9">
                 {currentPosts.map((p) => (
                   <ProductCard key={p}/>
                 ))}
               </div>
             </div>
+            <div>
+              <hr className="opacity-10 my-5"/>
+              <Pagenation
+                totalPosts= {products.length}
+                postsPerPage= {postPerPage}
+                setCurrentPage= {setCurrentPage}
+                currentPage= {currentPage}
+              />
+            </div>
           </div>
           
-          <div>
-            <hr className="opacity-10 my-5"/>
-            <Pagenation
-              totalPosts= {products.length}
-              postsPerPage= {postPerPage}
-              setCurrentPage= {setCurrentPage}
-              currentPage= {currentPage}
-            />
-          </div>
-
-
         </div>
 
 
-
-
-
-
+        <div className="w-full bg-primary flex flex-col md:flex-row gap-8 py-7 px-6 rounded-3xl md:gap-[212px] md:py-9 md:px-16 mt-5">
+          <h1 className="text-[32px] md:text-[40px] text-white font-integralcf leading-9 md:leading-11">Stay Upto Date About Our Latest Offers</h1>
+          <div className="flex flex-col gap-3 md:w-1/2">
+            <form className="relative">
+              <img src="emailLogo.png" alt="emaillogo" className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input type="email" placeholder="Enter your email address" className="py-3 pr-4 pl-12 bg-white rounded-full w-full"/>
+            </form>
+            <button type="submit" className="w-full py-3 bg-white rounded-full font-satoshi">Subscribe to Newsletter</button>
+          </div>
+        </div>
 
       </div>
     </section>

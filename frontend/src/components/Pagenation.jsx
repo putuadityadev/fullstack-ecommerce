@@ -35,7 +35,7 @@ const Pagenation = ({ totalPosts, postsPerPage, setCurrentPage, currentPage }) =
       {pages.map((page, i) => (
         <button 
           key={i}
-          className={`${page === currentPage ? 'bg-gray-200' : ''}  text-primary w-9 h-9 flex items-center justify-center rounded-lg hover:cursor-pointer`}
+          className={`${page === currentPage ? 'bg-gray-100' : ''}  text-primary w-9 h-9 flex items-center justify-center rounded-lg hover:cursor-pointer`}
           onClick={() => setCurrentPage(page)}
         >
           {page}
