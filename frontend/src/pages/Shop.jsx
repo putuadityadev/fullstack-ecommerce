@@ -81,7 +81,7 @@ const Shop = () => {
   return (
     <section className="section-container mt-10 mx-auto">
       <div>
-        <div>
+        <div className="hidden">
           <span>Home</span>
           <span>Casual</span>
         </div>

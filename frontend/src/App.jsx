@@ -4,11 +4,13 @@ import Shop from "./pages/Shop"
 import ProductDetails from "./pages/ProductDetails"
 import Cart from "./pages/Cart"
 import Profile from "./pages/Profile"
+import Navbar from "./components/Navbar"
 
 
 const App = () => {
   return (
     <Router>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<Shop />} />
