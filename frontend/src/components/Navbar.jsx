@@ -32,7 +32,7 @@ const Navbar = () => {
   const location = useLocation();
 
   return (
-    <nav className="mx-auto">
+    <nav className={`mx-auto ${location.pathname.startsWith("/admin") && 'hidden'}`}>
       {isNavOpen && (
         <div className="w-full h-full fixed inset-0 z-10 bg-primary/10 backdrop-blur-xs" onClick={handleNavOpen}>
           

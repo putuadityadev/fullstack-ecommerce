@@ -1,10 +1,11 @@
-
+import { Image } from "@heroui/react"
 
 const ProductCard = () => {
   return (
     <div className="flex flex-col w-[172px] gap-[10px] xl:w-fit">
       <div className="bg-[#F0EEED] w-[172px] h-[172px] rounded-xl overflow-hidden flex items-center justify-center xl:w-[295px] xl:h-[298px]">
-        <img
+        <Image
+        isZoomed
         src="../public/tshirt.png"
         alt=""
         className="object-cover"
