@@ -6,15 +6,10 @@ import CheckBoxColor from "../ui/CheckBoxColor";
 import { useState } from "react";
 import SizeButton from "../ui/SizeButton";
 import Pagenation from "../components/Pagenation";
+import { filterList, colors, sizes, dressStyles } from "../../data";
 
 const Shop = () => {
-  const filterList = [
-    'T-shirt',
-    'Short',
-    'Shirt',
-    'Hoodie',
-    'Jeans',
-  ]
+  
 
   const [selectedValue, setSelectedValue] = useState(null);
 
@@ -28,37 +23,7 @@ const Shop = () => {
     setSizeSelected(sizeSelected === i ? null : i)
   }
 
-  const checkboxes = [
-    { value: 1, color: 'bg-green-500' },  
-    { value: 2, color: 'bg-red-500' },     
-    { value: 3, color: 'bg-yellow-400' },  
-    { value: 4, color: 'bg-orange-500' },  
-    { value: 5, color: 'bg-sky-400' },     
-    { value: 6, color: 'bg-blue-600' },    
-    { value: 7, color: 'bg-purple-600' }, 
-    { value: 8, color: 'bg-pink-500' },     
-    { value: 9, color: 'bg-white' },        
-    { value: 10, color: 'bg-black' }        
-  ];
 
-  const sizes = [
-    "XX-Small",
-    "X-Small",
-    "Small",
-    "Medium",
-    "Large",
-    "X-Large",
-    "XX-Large",
-    "3X-Large",
-    "4X-Large"
-  ];
-
-  const dressStyles = [
-    "Casual",
-    "Formal",
-    "Party",
-    "Gym"
-  ]
 
   const products = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
@@ -103,7 +68,7 @@ const Shop = () => {
                 <ul className="font-satoshi font-light opacity-60 flex flex-col gap-5">
                   {filterList.map((filter, i) => (
                     <li key={i} className="flex justify-between">
-                      {filter}
+                      {filter.name}
                       <FaAngleRight />
                     </li>
                   ))}
@@ -124,12 +89,12 @@ const Shop = () => {
               <div>
               <h2 className="font-satoshi text-xl font-bold text-primary">Colors</h2>
               <div className="flex flex-wrap gap-4 mt-4">
-                {checkboxes.map((checkbox) => (
+                {colors.map((color) => (
                   <CheckBoxColor 
-                    key={checkbox.value}
-                    value={checkbox.value}
-                    color={checkbox.color}
-                    isSelected={selectedValue === checkbox.value}
+                    key={color.value}
+                    value={color.value}
+                    color={color.color}
+                    isSelected={selectedValue === color.value}
                     onClick={handleCheckColor}
                   />
                 ))}
@@ -146,7 +111,7 @@ const Shop = () => {
                 {sizes.map((size, i) => (
                   <SizeButton
                    key={i}
-                   size={size}
+                   size={size.size}
                    isSelected={sizeSelected === i}
                    onClick={handleCheckSize}
                    i={i}
@@ -164,7 +129,7 @@ const Shop = () => {
                 <ul className="font-satoshi font-light opacity-60 flex flex-col gap-5">
                   {dressStyles.map((style, i) => (
                     <li key={i} className="flex justify-between">
-                      {style}
+                      {style.name}
                       <FaAngleRight />
                     </li>
                   ))}

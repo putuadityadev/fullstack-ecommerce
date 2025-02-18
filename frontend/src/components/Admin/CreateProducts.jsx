@@ -1,10 +1,29 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { colors, sizes } from '../../../data';
+import { createImage, createProduct } from '../../../data/api';
+
+
 
 const CreateProducts = () => {
   const [previewImage, setPreviewImage] = useState(null);
+  const inputFile = useRef(null)
+  const MAX_SIZE = 15000000
+  const [forms, setForms] = useState({
+    productName: "",
+    price: "",
+    description: "",
+    sizes: [],
+    colors: [],
+    imageId: "",
+    discount: ""
+  });
 
+
+  //Handle input
   const handleImageChange = (e) => {
     const file = e.target.files[0];
+    const fileExtension = file.name.substring(file.name.lastIndexOf("."))
+
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -12,12 +31,107 @@ const CreateProducts = () => {
       };
       reader.readAsDataURL(file);
     }
+
+    if(fileExtension != ".jpg" && fileExtension != ".jpeg" && fileExtension != ".png") {
+      alert("File must be jpg, jpeg, or png!")
+      inputFile.current.value = ""
+      inputFile.current.type = "file"
+      return
+    }
+
+    if(file.size > MAX_SIZE) {
+      alert("File size exceeds the limit (15 Mb)!")
+      inputFile.current.value = ""
+      inputFile.current.type = "file"
+      return
+    }
+    setForms({
+      ...forms,
+      imageId: file
+    })
   };
+
+  
+  const handleInputChange = (e) => {
+    setForms({
+      ...forms,
+      [e.target.name]: e.target.name === 'price' || e.target.name === 'discount' 
+        ? Number(e.target.value)
+        : e.target.value
+    })
+  }
+
+  const handleCheckChange = (e) => {
+    const { name, value, checked } = e.target
+    setForms(prev => {
+      const prevValues = [...prev[name]]
+
+      if(checked) {
+       return {
+        ...prev,
+        [name] : [...prevValues, value]
+       }
+      } else {
+        return {
+          ...prev,
+          [name]: prevValues.filter(item => item !== value)
+        }
+      }
+    })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const file = forms.imageId
+      if(!file) {
+        throw new Error("Pilih gambar terlebih dahulu")
+      }
+
+      const imageRes = await createImage(file)
+      if(!imageRes.data?.key) {
+        throw new Error("Gagal upload gambar")
+      }
+
+      const productData = {
+        productName: forms.productName,
+        price: Number(forms.price),
+        description: forms.description,
+        sizes: forms.sizes,
+        colors: forms.colors,
+        discount: Number(forms.discount) || 0,
+        imageId: imageRes.data.key 
+      };
+
+      const result = await createProduct(productData)
+      if(result) {
+        setForms({
+          productName: "",
+          price: "",
+          description: "",
+          sizes: [],
+          colors: [],
+          imageId: "",
+          discount: ""
+        })
+        if(inputFile.current) {
+          inputFile.current.value = ""
+        }
+      }
+      
+    } catch (err) {
+      console.error("Error:", err)
+      alert(err.message)
+    }
+  }
+
+  console.log(forms)
+  
 
   return (
     <main className="md:mt-10">
       <div className="h-fit md:w-1/2 md:border p-10 rounded-xl mx-auto px-[15px] md:px-8">
-        <form className="flex flex-col font-satoshi text-primary">
+        <form className="flex flex-col font-satoshi text-primary" onSubmit={handleSubmit}>
           <label className="font-bold text-lg">Product Image</label>
           <div className="relative border-2 border-dashed w-fit border-primary rounded-xl mb-5 h-48 flex items-center justify-center hover:bg-primary/10 py-2 px-4 mx-auto">
             <input 
@@ -25,7 +139,9 @@ const CreateProducts = () => {
               accept="image/*"
               onChange={handleImageChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              disabled = {!previewImage ? false : true}
+
+              name="file"
+              ref={inputFile}
             />
             {previewImage ? (
                 <img 
@@ -54,13 +170,74 @@ const CreateProducts = () => {
             )}
           </div>
           <label className="font-bold text-lg">Product Name</label>
-          <input type="text" className="w-full p-2 px-4 border-primary border rounded-xl  text-primary mb-5" placeholder="Input product name" />
+          <input
+            name="productName"
+            type="text"
+            className="w-full p-2 px-4 border-primary border rounded-xl text-primary mb-5"
+            placeholder="Input product name"
+            required
+            onChange={handleInputChange}
+          />
           <label className="font-bold text-lg">Product Price</label>
-          <input type="number" className="w-full p-2 px-4 border-primary border rounded-xl  text-primary mb-5" placeholder="Set the price" />
+          <input 
+            name="price"
+            type="number"
+            className="w-full p-2 px-4 border-primary border rounded-xl text-primary mb-5"
+            placeholder="Set the price in $"
+            required
+            onChange={handleInputChange}
+          />
           <label className="font-bold text-lg">Description</label>
-          <textarea type="text" className="w-full p-2 px-4 border-primary border rounded-xl  text-primary mb-5" placeholder="Add a description of the product"required />
+          <textarea
+            name="description"
+            type="text"
+            className="w-full p-2 px-4 border-primary border rounded-xl  text-primary mb-5"
+            placeholder="Add a description of the product"
+            required
+            onChange={handleInputChange}
+          />
+          
+          <label className="font-bold text-lg">Product Colors</label>
+          <div className="flex justify-between border p-4 rounded-xl mb-5">
+            {colors.map((color) => (
+              <div key={color.value} className="flex gap-1">
+                <input
+                  name="colors"
+                  type="checkbox"
+                  value={color.name}
+                  className="w-5"
+                  onChange={handleCheckChange}
+                  />
+                <div className={`w-6 h-6 border rounded-full ${color.color}`}/>
+              </div>
+            ))}
+          </div>
+
+          <label className="font-bold text-lg">Product Sizes</label>
+          <div className="flex flex-wrap border p-4 rounded-xl mb-5 gap-4">
+            {sizes.map((size) => (
+              <div key={size.id} className="flex gap-1">
+                <input
+                  name="sizes"
+                  type="checkbox"
+                  value={size.size}
+                  className="w-5"
+                  onChange={handleCheckChange}
+                  />
+                <label>{size.size}</label>
+              </div>
+            ))}
+          </div>
+
           <label className="font-bold text-lg">Product Discount</label>
-          <input type="number" className="w-full p-2 px-4 border-primary border rounded-xl  text-primary mb-5" placeholder="Give discount in %"/>
+          <input
+            name="discount"
+            type="number"
+            className="w-full p-2 px-4 border-primary border rounded-xl text-primary mb-5"
+            placeholder="Give discount in %"
+            onChange={handleInputChange}
+          />
+
           <div className="flex gap-10 mt-5">
             <button className="p-4 text-primary border rounded-xl w-1/2">Cancel</button>
             <button className="p-4 text-white font-bold bg-primary rounded-xl w-1/2">Publish</button>
