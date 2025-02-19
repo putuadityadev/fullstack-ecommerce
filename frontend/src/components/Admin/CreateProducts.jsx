@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react';
 import { colors, sizes } from '../../../data';
 import { createImage, createProduct } from '../../../data/api';
+import SpinnerLoadingUi from '../../ui/SpinnerLoadingUi';
+import Swal from 'sweetalert2'
 
 
 
@@ -17,6 +19,7 @@ const CreateProducts = () => {
     imageId: "",
     discount: ""
   });
+  const [isLoading, setIsLoading] = useState(false)
 
 
   //Handle input
@@ -63,29 +66,21 @@ const CreateProducts = () => {
 
   const handleCheckChange = (e) => {
     const { name, value, checked } = e.target
-    setForms(prev => {
-      const prevValues = [...prev[name]]
-
-      if(checked) {
-       return {
-        ...prev,
-        [name] : [...prevValues, value]
-       }
-      } else {
-        return {
-          ...prev,
-          [name]: prevValues.filter(item => item !== value)
-        }
-      }
-    })
+    setForms(prev => ({
+      ...prev,
+      [name]: checked 
+        ? [...prev[name], value] 
+        : prev[name].filter(item => item !== value)
+    }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
+      setIsLoading(true)
       const file = forms.imageId
       if(!file) {
-        throw new Error("Pilih gambar terlebih dahulu")
+        throw new Error("Select the image!")
       }
 
       const imageRes = await createImage(file)
@@ -114,11 +109,19 @@ const CreateProducts = () => {
           imageId: "",
           discount: ""
         })
+        setPreviewImage(null)
+
         if(inputFile.current) {
           inputFile.current.value = ""
         }
       }
-      
+      setIsLoading(false)
+      Swal.fire({
+        title: "Product successfully added!",
+        icon: "success",
+        draggable: true,
+        confirmButtonColor: '#460203',
+      })
     } catch (err) {
       console.error("Error:", err)
       alert(err.message)
@@ -130,8 +133,13 @@ const CreateProducts = () => {
 
   return (
     <main className="md:mt-10">
+      <div className={`${isLoading ? '' : 'hidden'} transition-all ease-in-out duration-300 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-screen bg-primary/10 w-screen z-20`}>
+        <div className='flex items-center justify-center h-screen'>
+          <SpinnerLoadingUi />
+        </div>
+      </div>
       <div className="h-fit md:w-1/2 md:border p-10 rounded-xl mx-auto px-[15px] md:px-8">
-        <form className="flex flex-col font-satoshi text-primary" onSubmit={handleSubmit}>
+        <form className="flex flex-col font-satoshi text-primary" onSubmit={handleSubmit} >
           <label className="font-bold text-lg">Product Image</label>
           <div className="relative border-2 border-dashed w-fit border-primary rounded-xl mb-5 h-48 flex items-center justify-center hover:bg-primary/10 py-2 px-4 mx-auto">
             <input 
@@ -139,7 +147,6 @@ const CreateProducts = () => {
               accept="image/*"
               onChange={handleImageChange}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-
               name="file"
               ref={inputFile}
             />
@@ -177,6 +184,7 @@ const CreateProducts = () => {
             placeholder="Input product name"
             required
             onChange={handleInputChange}
+            value={forms.productName}
           />
           <label className="font-bold text-lg">Product Price</label>
           <input 
@@ -186,15 +194,17 @@ const CreateProducts = () => {
             placeholder="Set the price in $"
             required
             onChange={handleInputChange}
+            value={forms.price}
           />
           <label className="font-bold text-lg">Description</label>
           <textarea
             name="description"
             type="text"
-            className="w-full p-2 px-4 border-primary border rounded-xl  text-primary mb-5"
+            className="w-full h-fit p-2 px-4 border-primary border rounded-xl  text-primary mb-5"
             placeholder="Add a description of the product"
             required
             onChange={handleInputChange}
+            value={forms.description}
           />
           
           <label className="font-bold text-lg">Product Colors</label>
@@ -207,6 +217,7 @@ const CreateProducts = () => {
                   value={color.name}
                   className="w-5"
                   onChange={handleCheckChange}
+                  checked={forms.colors.includes(color.name)}
                   />
                 <div className={`w-6 h-6 border rounded-full ${color.color}`}/>
               </div>
@@ -223,6 +234,7 @@ const CreateProducts = () => {
                   value={size.size}
                   className="w-5"
                   onChange={handleCheckChange}
+                  checked={forms.sizes.includes(size.size)}
                   />
                 <label>{size.size}</label>
               </div>
@@ -236,6 +248,7 @@ const CreateProducts = () => {
             className="w-full p-2 px-4 border-primary border rounded-xl text-primary mb-5"
             placeholder="Give discount in %"
             onChange={handleInputChange}
+            value={forms.discount}
           />
 
           <div className="flex gap-10 mt-5">

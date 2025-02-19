@@ -8,6 +8,9 @@ import Navbar from "./components/Navbar"
 import Admin from "./pages/Admin"
 import ViewProducts from "./components/Admin/viewProducts"
 import CreateProducts from "./components/Admin/CreateProducts"
+import Auth from "./pages/Auth"
+
+
 
 
 const App = () => {
@@ -15,6 +18,7 @@ const App = () => {
     <Router>
       <Navbar />
       <Routes>
+        <Route path="/auth" element={<Auth />}/>
         <Route path="/admin" element={<Admin/>}>
           <Route path="view-products" element={<ViewProducts />} />
           <Route path="create-product" element={<CreateProducts />} />

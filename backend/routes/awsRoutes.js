@@ -25,16 +25,15 @@ awsRoutes.route("/:id").get(async (req, res) => {
     }
 
     const data = await s3Client.send(new GetObjectCommand(bucketParams))
-    const contentType = data.ContentType
-    const srcString = await data.Body.transformToString('base64')
-    const imageSource = `data:${contentType};base64,${srcString}`
-
-    res.json({data: imageSource})
+    
+    res.setHeader('Content-Type', data.ContentType)
+    
+    data.Body.pipe(res)
 
   } catch (err) {
     console.error("Error getting image", err)
     res.status(500).json({
-      messege: "Eror retriving image"
+      message: "Error retrieving image"
     })
   }
 });

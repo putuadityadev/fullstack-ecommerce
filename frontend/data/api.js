@@ -1,5 +1,5 @@
 import axios from 'axios'
-const URL = 'http://localhost:3000'
+export const URL = 'http://localhost:3000'
 
 export async function getProducts() {
   try {
@@ -49,4 +49,28 @@ export async function createImage(file) {
     console.error("Error upload image:", err.response?.data || err.message)
     throw err
   } 
+}
+
+
+export async function createUser(user) {
+  try {
+    const userData = {
+      ...user
+    }
+    const res = await axios.post(`${URL}/users`, userData);
+    return res.data
+  } catch (err) {
+    console.error("Eror creating user", err)
+    throw err
+  }
+}
+
+export async function verifyUser(user) {
+  try {
+    const res = await axios.post(`${URL}/users/login`, user);
+    return res.data.token;
+  } catch (err) {
+    console.error(err)
+    throw err
+  }
 }

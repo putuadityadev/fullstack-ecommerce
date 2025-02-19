@@ -1,36 +1,27 @@
 import ProductCard from "../components/productCard"
-import { IoIosClose } from "react-icons/io";
 import { FaAngleRight } from "react-icons/fa6";
 import SliderPrice from "../ui/Slider";
 import CheckBoxColor from "../ui/CheckBoxColor";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SizeButton from "../ui/SizeButton";
 import Pagenation from "../components/Pagenation";
 import { filterList, colors, sizes, dressStyles } from "../../data";
+import { getProducts } from "../../data/api"
+
 
 const Shop = () => {
-  
-
   const [selectedValue, setSelectedValue] = useState(null);
+  const [products, setProducts] = useState([])
+  const [sizeSelected, setSizeSelected] = useState(null);
+  const [filterOpenned, setFilterOpenned] = useState(false)
 
   const handleCheckColor = (value) => {
     setSelectedValue(selectedValue === value ? null : value)
   }
-
-  const [sizeSelected, setSizeSelected] = useState(null);
-
+  
   const handleCheckSize = (i) => {
     setSizeSelected(sizeSelected === i ? null : i)
   }
-
-
-
-  const products = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
-  ]
-
-
-  const [filterOpenned, setFilterOpenned] = useState(false)
 
   function toggleFilter() {
     !filterOpenned ? setFilterOpenned(true) : setFilterOpenned(false)
@@ -43,6 +34,16 @@ const Shop = () => {
   const firstPostIndex = lastPostIndex  - postPerPage;
   const currentPosts = products.slice(firstPostIndex, lastPostIndex)
 
+  useEffect(() => {
+    async function loadProducts() {
+      let data = await getProducts()
+      setProducts(data)
+    }
+    loadProducts()
+  }, [])
+
+  console.log(products)
+  
   return (
     <section className="section-container mt-10 mx-auto">
       <div>
@@ -143,11 +144,11 @@ const Shop = () => {
           
 
           {/* Products Grid */}
-          <div className="w-full md:w-[75dvw] mt-5 h-fit overflow-hidden">
+          <div className="w-full md:w-[75dvw] mt-5 h-fit">
             <div className="flex justify-between items-center"> 
               <div className="flex gap-2 items-end">
                 <h2 className="font-satoshi text-2xl text-primary font-bold leading-none">Casual</h2>
-                <span className="font-satoshi text-sm text-primary opacity-60 leading-none">Showing 1-10 of 100 Products</span>
+                <span className="font-satoshi text-sm text-primary opacity-60 leading-none">Showing 1-{postPerPage} of {products.length} Products</span>
               </div>
               <button className="w-8 h-8 bg-[#F0F0F0] flex items-center justify-center rounded-full md:hidden" onClick={toggleFilter}>
                 <img src="/filter-icon.png" alt="filter-icon" className="object-contain"/>
@@ -156,8 +157,17 @@ const Shop = () => {
 
             <div>
               <div className="grid grid-cols-2 md:grid-cols-3 mt-7 gap-x-[14px] gap-y-6 md:gap-x-5 md:gap-y-9">
-                {currentPosts.map((p) => (
-                  <ProductCard key={p}/>
+                {currentPosts.map(({_id, productName, price, description, sizes, colors, imageId, discount}) => (
+                  <ProductCard
+                    key={_id}
+                    productName={productName}
+                    price={price}
+                    description={description}
+                    sizes={sizes}
+                    colors={colors}
+                    imageId={imageId}
+                    discount={discount}
+                  />
                 ))}
               </div>
             </div>
