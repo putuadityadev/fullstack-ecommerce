@@ -3,7 +3,7 @@ import ReviewCard from "../ui/ReviewCard"
 
 const Reviews = () => {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 w-full">
       <div className="mt-5 flex justify-between">
         <div className="flex items-center gap-2">
           <h2 className="font-satoshi text-[20px] font-semibold">
@@ -23,7 +23,7 @@ const Reviews = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ReviewCard />
         <ReviewCard />
         <ReviewCard />

@@ -21,6 +21,23 @@ export async function getProducts() {
   }
 }
 
+export async function getProduct(id) {
+  try {
+    const productRes = await axios.get(`${URL}/products/${id}`)
+    const product = productRes.data
+    const imageRes = await axios.get(`${URL}/images/${product.imageId}`)
+
+    return{
+      ...product,
+      image: imageRes.data.data,
+      id: product._id
+    }
+  } catch (err) {
+    console.error("Error fetching product details:", err);
+    throw err;
+  }
+}
+
 export async function createProduct(product) {
   try {
     const productData = {

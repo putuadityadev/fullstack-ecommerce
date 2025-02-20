@@ -132,3 +132,11 @@ export const dressStyles = [
       name: "Gym" 
   }
 ];
+
+export const discountCal = (discount, price) => {
+    if(discount === 0) {
+        return price
+    } else {
+        return price = price - (price * (discount/100))
+    }
+}

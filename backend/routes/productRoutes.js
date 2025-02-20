@@ -29,7 +29,7 @@ productRoutes.route('/products/:id').get(async (req, res) => {
     let db = database.getDb()
     let data = await db.collection('products').findOne({_id : new ObjectId(req.params.id)});
 
-    if(ObjectId.keys(data).length > 0) {
+    if(data) {
       res.json(data)
     } else {
       throw new Error ("Data was not found")
