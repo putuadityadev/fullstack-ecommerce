@@ -4,7 +4,9 @@ import Reviews from "../components/Reviews"
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { getProduct, getProducts, URL } from "../../data/api"
-import { discountCal, colors } from "../../data"
+import { discountCal } from "../../data"
+import SelectColor from "../components/SelectColor"
+import SelectSize from "../components/SelectSize"
 
 
 const ProductDetails = () => {
@@ -13,6 +15,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState({})
   const [recProduct, setRecProduct] = useState([])
   const [randomProducts, setRandomProducts] = useState([])
+  
 
   useEffect(() => {
     const loadProduct = async () => {
@@ -54,9 +57,51 @@ const ProductDetails = () => {
   }, [recProduct, hasRandom])
 
   const imageProduct = `${URL}/images/${product.imageId}`
-  const colorFilter = colors.filter(obj => (product.colors ?? []).includes(obj.name))
   
+  //cart
+  const [countCart, setCountCart] = useState(1)
+  const [cartitems, setCartItems] = useState([])
   
+  const handleAddToCart = () => {
+    const localColor = localStorage.getItem(`color.${id}`)
+    let cartItem = {
+      id: product._id,
+      productName: product.productName,
+      price: product.price,
+      size: localStorage.getItem(`size.${id}`),
+      color: localColor && JSON.parse(localColor),
+      quantity: countCart
+    }
+
+    if (!cartItem.color) {
+      alert("Select Color")
+    } else if (!cartItem.size) {
+      alert("Select size")
+    } else {
+      setCartItems(prev => {
+        const existingItem = prev.find(item =>
+          item.id === cartItem.id &&
+          item.color.value === cartItem.color.value &&
+          item.size === cartItem.size
+        )
+        if(existingItem) {
+          return prev.map(item => 
+            item.id === cartItem.id &&
+            item.color.value === cartItem.color.value &&
+            item.size === cartItem.size
+              ? {...item, quantity: item.quantity + cartItem.quantity}
+              : item
+          )
+        }
+        //new item
+        return [...prev, cartItem]
+        
+      })
+    }
+    
+  }
+
+  // TODO: LOGIC TAMBAHKAN CARITEMS ARRAY KE LOCALSTORAGE TANPA OVERWRITE
 
   return (
     <main className="section-container mt-10 mx-auto">
@@ -102,37 +147,35 @@ const ProductDetails = () => {
           <div className="flex flex-col gap-2">
             <h2 className="font-satoshi text-base opacity-60">Select Colors</h2>
             <div className="flex gap-2">
-              {colorFilter.map((color) => (
-                <button key={color.value} className={`w-10 h-10 rounded-full border border-primary/20 ${color.color}`}/>
-              ))}
+              <SelectColor
+                productColors={product.colors}
+              />
             </div>
           </div>
           <hr className="my-6 opacity-10"/>
           <div className="flex flex-col gap-2">
             <h2 className="font-satoshi text-base opacity-60">Choose Size</h2>
             <div className="flex flex-wrap gap-2">
-              {(product.sizes ?? []).map((size) => (
-                <button
-                  key={size}
-                  className="py-[10px] px-5 bg-[#F0F0F0] rounded-full hover:bg-primary hover:text-white font-satoshi text-sm"
-                >
-                {size}
-              </button>
-              ))}
+              <SelectSize
+                productSizes={product.sizes}
+              />
             </div>
           </div>
           <hr className="my-6 opacity-10"/>
           <div className="flex w-full gap-3">
             <div className="py-3 px-5 md:py-4 flex justify-between items-center w-[35%] bg-[#F0F0F0] rounded-full">
-              <button>
+              <button onClick={() => countCart > 1 && setCountCart(countCart - 1)} className="hover:cursor-pointer">
                 <img src="minus.png" alt="minus-button" className="w-3 h-3 md:w-6 md:h-6"/>
               </button>
-              <span className="font-satoshi text-base font-bold text-primary">1</span>
-              <button>
+              <span className="font-satoshi text-base font-bold text-primary">{countCart}</span>
+              <button onClick={() => setCountCart(countCart + 1)} className="hover:cursor-pointer">
                 <img src="plus.png" alt="plus-button" className="w-3 h-3 md:w-6 md:h-6"/>
               </button>
             </div>
-            <button className="py-3 px-14 md:py-4 bg-primary font-satoshi text-white rounded-full w-[65%]">
+            <button
+              className="py-3 px-14 md:py-4 bg-primary font-satoshi text-white rounded-full w-[65%]"
+              onClick={handleAddToCart}
+            >
               Add to Cart
             </button>
           </div>
