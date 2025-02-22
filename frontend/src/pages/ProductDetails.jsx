@@ -60,7 +60,10 @@ const ProductDetails = () => {
   
   //cart
   const [countCart, setCountCart] = useState(1)
-  const [cartitems, setCartItems] = useState([])
+  const [cartitems, setCartItems] = useState(() => {
+    const savedCart = localStorage.getItem("cart")
+    return savedCart ? JSON.parse(savedCart) : []
+  })
   
   const handleAddToCart = () => {
     const localColor = localStorage.getItem(`color.${id}`)
@@ -95,13 +98,16 @@ const ProductDetails = () => {
         }
         //new item
         return [...prev, cartItem]
-        
       })
     }
-    
   }
 
-  // TODO: LOGIC TAMBAHKAN CARITEMS ARRAY KE LOCALSTORAGE TANPA OVERWRITE
+  useEffect(() => {
+    console.log(cartitems)
+    localStorage.setItem("cart", JSON.stringify(cartitems))
+  }, [cartitems])
+
+  
 
   return (
     <main className="section-container mt-10 mx-auto">
@@ -114,7 +120,7 @@ const ProductDetails = () => {
           <div className="flex justify-between md:order-1 md:flex-col">
             <div className="w-[111px] h-[106px] md:w-[152px] md:h-[167px] rounded-2xl overflow-hidden border border-primary">
               <img src={imageProduct} alt="product-image" className="object-cover w-full h-full" />
-            </div>
+            </div> 
             <div className="w-[111px] h-[106px] md:w-[152px] md:h-[167px] rounded-2xl overflow-hidden">
               <img src={imageProduct} alt="product-image" className="object-cover w-full h-full" />
             </div>
