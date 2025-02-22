@@ -70,6 +70,7 @@ const ProductDetails = () => {
     let cartItem = {
       id: product._id,
       productName: product.productName,
+      imageId: product.imageId,
       price: product.price,
       size: localStorage.getItem(`size.${id}`),
       color: localColor && JSON.parse(localColor),
