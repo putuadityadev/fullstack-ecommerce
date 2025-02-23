@@ -59,11 +59,10 @@ const Navbar = () => {
   }, [cartQuantity]);
 
   return (
-    <nav className={`mx-auto ${location.pathname.startsWith("/admin") || location.pathname.startsWith("/auth") && 'hidden'}`}>
+    <nav className={`mx-auto ${location.pathname.startsWith("/admin") || location.pathname.startsWith("/auth") && 'hidden'}  fixed z-50 bg-white top-0 left-0 right-0`}>
       {isNavOpen && (
-        <div className="w-full h-full fixed inset-0 z-10 bg-primary/10 backdrop-blur-xs" onClick={handleNavOpen}>
-          
-        </div>
+        <div className="w-full h-full fixed inset-0 z-10 bg-primary/10 backdrop-blur-xs" onClick={handleNavOpen}/>
+
       )}
       <div className="w-full flex justify-center items-center py-[9px] bg-primary h-[34px] relative">
         <h3 className="font-satoshi text-xs text-white font-extralight">Sign up and get 20% off to your first order. <span className="font-semibold underline">Sign Up Now</span></h3>

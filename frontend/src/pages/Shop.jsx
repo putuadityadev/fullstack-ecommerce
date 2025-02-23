@@ -78,7 +78,7 @@ const Shop = () => {
   }, [cartData])
   
   return (
-    <section className="section-container mt-10 mx-auto">
+    <section className="section-container mx-auto">
       <div>
         <div className="hidden">
           <span>Home</span>
