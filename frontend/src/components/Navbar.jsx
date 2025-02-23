@@ -1,6 +1,6 @@
 import { IoMdClose } from "react-icons/io"
 import { SlArrowRight } from "react-icons/sl";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navbar = () => {
@@ -30,6 +30,33 @@ const Navbar = () => {
   }
 
   const location = useLocation();
+  const [cartQuantity, setCartQuantity] = useState(
+    JSON.parse(localStorage.getItem("cartQuantity")) || 0
+  )
+
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if(e.key === "cartQuantity") {
+        setCartQuantity(JSON.parse(e.newValue))
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newQuantity = JSON.parse(localStorage.getItem("cartQuantity")) || 0;
+      if(newQuantity !== cartQuantity) {
+        setCartQuantity(newQuantity);
+      }
+    }, 300);
+    
+    return () => clearInterval(interval);
+  }, [cartQuantity]);
 
   return (
     <nav className={`mx-auto ${location.pathname.startsWith("/admin") || location.pathname.startsWith("/auth") && 'hidden'}`}>
@@ -70,11 +97,12 @@ const Navbar = () => {
             <input type="text" className="hidden md:flex font-satoshi rounded-full py-3 pr-4 pl-12 w-[577px] bg-gray-100 text-primary" placeholder="Search for products..."/>
           </div>
           <div className="flex gap-[14px]">
-            <Link to="/cart">
-              <img src="cart.png" alt="cart" className="w-6 h-6" />
+            <Link to="/cart" className="relative">
+              <span className="-top-1 -right-3 absolute bg-red-600 w-fit h-4 px-1 rounded-full flex items-center justify-center text-white text-xs font-satoshi font-bold">{cartQuantity}</span>
+              <img src="cart.svg" alt="cart" className="w-6 h-6" />
             </Link>
             <Link to="/profile">
-              <img src="profile.png" alt="profile" className="w-6 h-6"/>
+              <img src="profile.svg" alt="profile" className="w-6 h-6"/>
             </Link>
           </div>
         </div>

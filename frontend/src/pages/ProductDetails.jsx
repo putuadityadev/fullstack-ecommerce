@@ -54,7 +54,7 @@ const ProductDetails = () => {
     } else {
       return
     }
-  }, [recProduct, hasRandom])
+  }, [recProduct, hasRandom]) 
 
   const imageProduct = `${URL}/images/${product.imageId}`
   
@@ -104,7 +104,8 @@ const ProductDetails = () => {
   }
 
   useEffect(() => {
-    console.log(cartitems)
+    const totalQuantity = cartitems.reduce((total, item) => total + item.quantity, 0)
+    localStorage.setItem("cartQuantity", totalQuantity)
     localStorage.setItem("cart", JSON.stringify(cartitems))
   }, [cartitems])
 

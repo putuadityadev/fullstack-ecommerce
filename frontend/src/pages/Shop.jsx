@@ -43,7 +43,39 @@ const Shop = () => {
     loadProducts()
   }, [])
 
-  console.log(products)
+  // add to cart
+  const [cartData, setCartData] = useState(() => {
+    const localData = localStorage.getItem("cart")
+    return localData ? JSON.parse(localData) : []
+  })
+  const handleAddToCart = (id) => {
+    const product = products.find(p => p._id === id)
+    const updatedCart = cartData.some(item => item.id === id)
+      ? cartData.map(item => 
+        item.id === id
+          ? {...item, quantity: item.quantity + 1}
+          : item
+      )
+      : [
+        ...cartData,
+          {
+            id: product.id,
+            color: product.colors[0],
+            imageId: product.imageId,
+            price: product.price,
+            productName: product.productName,
+            quantity: 1,
+            size: product.sizes[0]
+          }
+      ]
+    console.log(updatedCart)
+    setCartData(updatedCart)
+    localStorage.setItem("cart", JSON.stringify(updatedCart))
+  }
+  useEffect(() =>{
+    const totalQuantity = cartData.reduce((total, item) => total + item.quantity, 0);
+    localStorage.setItem("cartQuantity", totalQuantity);
+  }, [cartData])
   
   return (
     <section className="section-container mt-10 mx-auto">
@@ -169,6 +201,7 @@ const Shop = () => {
                     imageId={imageId}
                     discount={discount}
                     id={_id}
+                    clickAddToCart={() => handleAddToCart(_id)}
                   />
                 ))}
               </div>

@@ -20,15 +20,14 @@ const Cart = () => {
     totalPrice: 0
   })
 
+
   useEffect(() => {
    const newSubtotal = cartData.reduce((total, item) => {
     return total + (item.price * item.quantity)
    }, 0)
 
-   const totalQuantity = cartData.reduce((total, item) => {
-    return total + item.quantity
-   }, 0)
-   console.log(totalQuantity)
+   const totalQuantity = cartData.reduce((total, item) => total + item.quantity, 0);
+   localStorage.setItem("cartQuantity", totalQuantity);
    
    let newDeliveryFee = 0
     if(totalQuantity > 20) {
@@ -68,23 +67,35 @@ const Cart = () => {
       if(i === index) {
         return { ...item, quantity: item.quantity + 1 }
       }
+      
       return item
     })
+
     setCartData(newCartData)
     localStorage.setItem("cart", JSON.stringify(newCartData))
   }
 
   const handleMinusQuantity = (index) => {
-    const newCartData = cartData.map((item, i) => {
+    const updatedCart = cartData.map((item, i) => {
       if(i === index) {
-        return {...item, quantity: item.quantity - 1}
+        return {...item, quantity: Math.max(0, item.quantity - 1)}
       }
-      console.log(item)
       return item
-      
     })
+  
+    const newCartData = updatedCart.filter(item => item.quantity > 0)
     setCartData(newCartData)
     localStorage.setItem("cart", JSON.stringify(newCartData))
+  }
+
+  const handleDelete = (index) => {
+    const updatedCart = [...cartData]
+    updatedCart.splice(index, 1)
+    setCartData(updatedCart)
+    localStorage.setItem("cart", JSON.stringify(updatedCart))
+
+    const totalQuantity = cartData.reduce((total, item) => total + item.quantity, 0);
+    localStorage.setItem("cartQuantity", totalQuantity);
   }
   
   return (
@@ -107,6 +118,7 @@ const Cart = () => {
                   index={i}
                   clickPlus={() => handlePlusQuantity(i)}
                   clickMinus={() => handleMinusQuantity(i)}
+                  clickDelete={() => handleDelete(i)}
                 />
               ))}
             </div>

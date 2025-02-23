@@ -1,6 +1,6 @@
 
 
-const ProductCardCart = ({productName, image, size, color, price, quantity, clickMinus, clickPlus, index}) => {
+const ProductCardCart = ({productName, image, size, color, price, quantity, clickMinus, clickPlus, clickDelete, index}) => {
   return (
     <div>
       <div className="flex gap-3.5">
@@ -14,7 +14,9 @@ const ProductCardCart = ({productName, image, size, color, price, quantity, clic
               <h2 className="text-xs md:text-sm mt-1">Size: <span className="opacity-60 text-black">{size}</span></h2>
               <h2 className="text-xs md:text-sm">Color: <span className="opacity-60 text-black">{color}</span></h2>
             </div>
-            <img src="delete.svg" alt="delete-icon" />
+            <button className="hover:cursor-pointer hover:bg-red-100 p-1.5 rounded-full" onClick={() => clickDelete(index)}>
+              <img src="delete.svg" alt="delete-icon" />
+            </button>
           </div>
           <div className="flex justify-between">
             <h2 className="font-semibold text-xl md:text-2xl">${price}</h2>

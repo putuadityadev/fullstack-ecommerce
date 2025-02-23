@@ -2,9 +2,10 @@ import { Image } from "@heroui/react"
 import { URL } from "../../data/api"
 import { Link } from "react-router-dom"
 
-const ProductCard = ({productName, price,  imageId, discount, id}) => {
+const ProductCard = ({productName, price,  imageId, discount, id, clickAddToCart}) => {
   return (
-    <Link to={`/product/${id}`} className="flex flex-col w-[172px] gap-[10px] xl:w-fit">
+    <div className="flex flex-col w-[172px] gap-[10px] xl:w-fit">
+      <Link to={`/product/${id}`}>
       <div className="bg-[#F0EEED] w-[172px] h-[172px] rounded-xl overflow-hidden flex items-center justify-center xl:w-[295px] xl:h-[298px]">
         <Image
         isZoomed
@@ -26,12 +27,12 @@ const ProductCard = ({productName, price,  imageId, discount, id}) => {
           <span className={`${discount === 0 ? 'hidden' : ''} text-xs font-light text-red-500 bg-red-100 py-1 px-2 rounded-full xl:text-sm`}>{discount}%</span>
         </h2>
       </div>
-
-      <div className="flex gap-2 flex-col md:flex-row">
-        <button className="border py-2 px-5 rounded-xl border-primary font-satoshi hover:cursor-pointer">Add to Cart</button>
+      </Link>
+      <div className="flex gap-2 flex-col md:flex-row z-20">
+        <button className="border py-2 px-5 rounded-xl border-primary font-satoshi hover:cursor-pointer hover:bg-primary/10" onClick={() => clickAddToCart(id)}>Add to Cart</button>
         <button className="py-2 px-5 bg-primary/10 text-primary rounded-xl font-semibold hover:cursor-pointer">Buy Now</button>
       </div>
-    </Link>
+    </div>
   )
 }
 
